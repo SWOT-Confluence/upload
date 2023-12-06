@@ -99,3 +99,18 @@ resource "aws_iam_policy" "aws_lambda_upload_execution_policy" {
     ]
   })
 }
+
+# SSM Parameter Store
+resource "aws_ssm_parameter" "aws_ssm_parameter_podaac_key" {
+  name   = "podaac_key"
+  type   = "SecureString"
+  key_id = data.aws_kms_key.ssm_key.id
+  value  = var.podaac_key
+}
+
+resource "aws_ssm_parameter" "aws_ssm_parameter_podaac_secret" {
+  name   = "podaac_secret"
+  type   = "SecureString"
+  key_id = data.aws_kms_key.ssm_key.id
+  value  = var.podaac_secret
+}
