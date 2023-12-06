@@ -45,4 +45,4 @@ Command line arguments:
  [2] s3_state_bucket: Name of the S3 bucket to store Terraform state in (no need for s3:// prefix)
  [3] profile: Name of profile used to authenticate AWS CLI commands
 
-# Example usage: `./delpoy-lambda.sh "my-app-name" "s3-state-bucket-name" "confluence-named-profile"`
+Example usage: `./delpoy-lambda.sh "my-app-name" "s3-state-bucket-name" "confluence-named-profile"`
