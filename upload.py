@@ -90,10 +90,13 @@ def upload_sos(podaac_bucket, run_type, version, download_list, creds):
     try:
         for file_name in download_list:
             runtime = get_runtime(file_name)
-            full_name = f"{file_name.name.split('.nc')[0]}_{run_type}_{version}_{runtime}.nc"
+            if "priors" in file_name.name:
+                full_name = f"{file_name.name.split('_priors.nc')[0]}_{run_type}_{version}_priors_{runtime}.nc"
+            else:
+                full_name = f"{file_name.name.split('_results.nc')[0]}_{run_type}_{version}_results_{runtime}.nc"
             s3.upload_file(str(file_name),
                            podaac_bucket,
-                           full_name)
+                           f"SWOT_L4_DAWG_SOS_DISCHARGE/{full_name}")
             upload_list.append(full_name)
     except botocore.exceptions.ClientError as e:
         raise e
@@ -117,3 +120,17 @@ def clear_tmp(download_list):
     
     for download in download_list:
         download.unlink()
+
+
+if __name__ == "__main__":
+    event = {
+        "sos_bucket": "confluence-dev1-sos",
+        "podaac_bucket": "podaac-dev-swot-sos",
+        "run_type": "constrained",
+        "version": "0001",
+        "file_list": [
+            "na_sword_v15_SOS_priors.nc",
+            "na_sword_v15_SOS_results.nc"
+        ]
+    }
+    handler(event, None)
