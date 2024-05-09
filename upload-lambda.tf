@@ -95,6 +95,14 @@ resource "aws_iam_policy" "aws_lambda_upload_execution_policy" {
           "kms:Decrypt"
         ],
         "Resource" : "${data.aws_kms_key.ssm_key.arn}"
+      },
+      {
+        "Sid" : "AllowPublishToTopic",
+        "Effect" : "Allow",
+        "Action" : [
+          "sns:Publish"
+        ],
+        "Resource" : var.podaac_cnm_topic_arn
       }
     ]
   })
@@ -113,4 +121,11 @@ resource "aws_ssm_parameter" "aws_ssm_parameter_podaac_secret" {
   type   = "SecureString"
   key_id = data.aws_kms_key.ssm_key.id
   value  = var.podaac_secret
+}
+
+resource "aws_ssm_parameter" "aws_ssm_parameter_podaac_cumulus" {
+  name   = "podaac_cnm_topic_arn"
+  type   = "SecureString"
+  key_id = data.aws_kms_key.ssm_key.id
+  value  = var.podaac_cnm_topic_arn
 }

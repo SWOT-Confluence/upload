@@ -32,6 +32,12 @@ variable "podaac_secret" {
   description = "AWS secret key that allows uploading of SoS for ingestion"
 }
 
+variable "podaac_cnm_topic_arn" {
+  type        = string
+  default     = "None"
+  description = "CNM SNS Topic ARN"
+}
+
 variable "prefix" {
   type        = string
   description = "Prefix to add to all AWS resources as a unique identifier"
