@@ -30,7 +30,7 @@ def handler(event, context):
     
     sos_bucket = event["sos_bucket"]
     podaac_bucket = event["podaac_bucket"]
-    run_type = event["run_type"]
+    run_type = "None" if "run_type" not in event.keys() else event["run_type"]
     version = event["version"]
     file_list = event["file_list"]
     publish_only = "false" if "publish_only" not in event.keys() else event["publish_only"]
