@@ -28,7 +28,7 @@ def handler(event, context):
     
     start = datetime.datetime.now()
     
-    sos_bucket = event["sos_bucket"]
+    sos_bucket = "None" if "sos_bucket" not in event.keys() else event["sos_bucket"]
     podaac_bucket = event["podaac_bucket"]
     run_type = "None" if "run_type" not in event.keys() else event["run_type"]
     version = event["version"]
