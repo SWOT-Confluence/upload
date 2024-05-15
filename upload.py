@@ -9,6 +9,7 @@ Publishes CNM message to SNS Topic to kick off ingestion of SoS granules.
 # Standard imports
 import datetime
 import hashlib
+import json
 import os
 import pathlib
 import sys
@@ -65,6 +66,7 @@ def publish_cnm_message(podaac_bucket, version, file_list, download_list=[], pub
     
     for granule in publish_dict.values():
         message = create_message(podaac_bucket, version, granule)
+        print(f"Message created: {message}")
         publish_message(message)
         
     if publish_only == "true":
@@ -138,23 +140,23 @@ def create_message(podaac_bucket, version, granule):
                 "name": identifier,
                 "files": [
                     {
-                        "uri": f"s3://{podaac_bucket}/{COLLECTION}/{priors_file}",
-                        "checksum": granule["priors"]["checksum"],
-                        "size": granule["priors"]["size"],
-                        "type": "data",
-                        "name": priors_file,
-                        "checksumType": "md5"
-                    }, 
-                    {
                         "uri": f"s3://{podaac_bucket}/{COLLECTION}/{results_file}",
                         "checksum": granule["results"]["checksum"],
                         "size": granule["results"]["size"],
                         "type": "data",
                         "name": results_file,
                         "checksumType": "md5"
+                    },
+                    {
+                        "uri": f"s3://{podaac_bucket}/{COLLECTION}/{priors_file}",
+                        "checksum": granule["priors"]["checksum"],
+                        "size": granule["priors"]["size"],
+                        "type": "data",
+                        "name": priors_file,
+                        "checksumType": "md5"
                     }
                 ],
-                "dataVersion": version
+                "dataVersion": str(int(version))
             }
         }
         
@@ -174,10 +176,10 @@ def publish_message(message):
     topic_arn = get_cross_account()
     sns = boto3.client("sns", region_name="us-west-2")
     try:
-        # response = sns.publish(
-        #     TopicArn = topic_arn,
-        #     Message = json.dumps(message),
-        # )
+        response = sns.publish(
+            TopicArn = topic_arn,
+            Message = json.dumps(message),
+        )
         print(f"{message['identifier']} message published to SNS Topic: {topic_arn}")
     except botocore.exceptions.ClientError as e:
         raise e
