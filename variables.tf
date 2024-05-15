@@ -35,7 +35,13 @@ variable "podaac_secret" {
 variable "podaac_cnm_topic_arn" {
   type        = string
   default     = "None"
-  description = "CNM SNS Topic ARN"
+  description = "CNM SNS Topic ARN to publish to"
+}
+
+variable "podaac_cnm_topic_arns" {
+  type        = list(string)
+  default     = ["None"]
+  description = "List of CNM SNS Topic ARN to allow publication"
 }
 
 variable "prefix" {
