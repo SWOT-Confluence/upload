@@ -9,7 +9,7 @@ resource "aws_lambda_function" "aws_lambda_upload" {
   timeout          = 300
   memory_size      = 2048
   ephemeral_storage {
-    size = 5120
+    size = 10240
   }
     tags = {
     "Name" = "${var.prefix}-upload"
