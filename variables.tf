@@ -20,6 +20,11 @@ variable "default_tags" {
   default = {}
 }
 
+variable "iam_user" {
+  type        = string
+  description = "User to allow KMS key for SSM parameter store"
+}
+
 variable "podaac_key" {
   type        = string
   default     = "None"

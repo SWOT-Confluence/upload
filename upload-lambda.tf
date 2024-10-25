@@ -4,7 +4,7 @@ resource "aws_lambda_function" "aws_lambda_upload" {
   function_name    = "${var.prefix}-upload"
   role             = aws_iam_role.aws_lambda_upload_execution_role.arn
   handler          = "upload.handler"
-  runtime          = "python3.9"
+  runtime          = "python3.12"
   source_code_hash = filebase64sha256("upload.zip")
   timeout          = 300
   memory_size      = 2048
@@ -103,7 +103,7 @@ resource "aws_iam_policy" "aws_lambda_upload_execution_policy" {
           "kms:DescribeKey",
           "kms:Decrypt"
         ],
-        "Resource" : "${data.aws_kms_key.ssm_key.arn}"
+        "Resource" : "${aws_kms_key.kms_key_ssm.arn}"
       },
       {
         "Sid" : "AllowPublishToTopic",
@@ -121,20 +121,103 @@ resource "aws_iam_policy" "aws_lambda_upload_execution_policy" {
 resource "aws_ssm_parameter" "aws_ssm_parameter_podaac_key" {
   name   = "podaac_key"
   type   = "SecureString"
-  key_id = data.aws_kms_key.ssm_key.id
+  key_id = aws_kms_key.kms_key_ssm.id
   value  = var.podaac_key
 }
 
 resource "aws_ssm_parameter" "aws_ssm_parameter_podaac_secret" {
   name   = "podaac_secret"
   type   = "SecureString"
-  key_id = data.aws_kms_key.ssm_key.id
+  key_id = aws_kms_key.kms_key_ssm.id
   value  = var.podaac_secret
 }
 
 resource "aws_ssm_parameter" "aws_ssm_parameter_podaac_cumulus" {
   name   = "podaac_cnm_topic_arn"
   type   = "SecureString"
-  key_id = data.aws_kms_key.ssm_key.id
+  key_id = aws_kms_key.kms_key_ssm.id
   value  = var.podaac_cnm_topic_arn
+}
+
+# KMS Key
+resource "aws_kms_key" "kms_key_ssm" {
+  description              = "KMS key for SSM parameter encryption"
+  customer_master_key_spec = "SYMMETRIC_DEFAULT"
+  key_usage                = "ENCRYPT_DECRYPT"
+  policy = jsonencode({
+    "Id" : "key-consolepolicy-3",
+    "Version" : "2012-10-17",
+    "Statement" : [
+      {
+        "Sid" : "Enable IAM User Permissions",
+        "Effect" : "Allow",
+        "Principal" : {
+          "AWS" : "arn:aws:iam::${local.account_id}:root"
+        },
+        "Action" : "kms:*",
+        "Resource" : "*"
+      },
+      {
+        "Sid" : "Allow access for Key Administrators",
+        "Effect" : "Allow",
+        "Principal" : {
+          "AWS" : "arn:aws:iam::${local.account_id}:user/${var.iam_user}"
+        },
+        "Action" : [
+          "kms:Create*",
+          "kms:Describe*",
+          "kms:Enable*",
+          "kms:List*",
+          "kms:Put*",
+          "kms:Update*",
+          "kms:Revoke*",
+          "kms:Disable*",
+          "kms:Get*",
+          "kms:Delete*",
+          "kms:TagResource",
+          "kms:UntagResource",
+          "kms:ScheduleKeyDeletion",
+          "kms:CancelKeyDeletion"
+        ],
+        "Resource" : "*"
+      },
+      {
+        "Sid" : "Allow use of the key",
+        "Effect" : "Allow",
+        "Principal" : {
+          "AWS" : "arn:aws:iam::${local.account_id}:user/${var.iam_user}"
+        },
+        "Action" : [
+          "kms:Encrypt",
+          "kms:Decrypt",
+          "kms:ReEncrypt*",
+          "kms:GenerateDataKey*",
+          "kms:DescribeKey"
+        ],
+        "Resource" : "*"
+      },
+      {
+        "Sid" : "Allow attachment of persistent resources",
+        "Effect" : "Allow",
+        "Principal" : {
+          "AWS" : "arn:aws:iam::${local.account_id}:user/${var.iam_user}"
+        },
+        "Action" : [
+          "kms:CreateGrant",
+          "kms:ListGrants",
+          "kms:RevokeGrant"
+        ],
+        "Resource" : "*",
+        "Condition" : {
+          "Bool" : {
+            "kms:GrantIsForAWSResource" : "true"
+          }
+        }
+      }
+    ]
+  })
+}
+resource "aws_kms_alias" "kms_alias_ssm" {
+  name          = "alias/${var.prefix}-ssm-parameter-store"
+  target_key_id = aws_kms_key.kms_key_ssm.key_id
 }

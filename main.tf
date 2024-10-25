@@ -5,7 +5,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 4.0"
+      version = "~> 5.0"
     }
   }
 }
@@ -21,10 +21,6 @@ provider "aws" {
 
 # Data sources
 data "aws_caller_identity" "current" {}
-
-data "aws_kms_key" "ssm_key" {
-  key_id = "alias/${var.prefix}-ssm-parameter-store"
-}
 
 data "aws_s3_bucket" "s3_sos" {
   bucket = "${var.prefix}-sos"
