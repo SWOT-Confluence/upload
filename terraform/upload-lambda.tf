@@ -5,7 +5,7 @@ resource "aws_lambda_function" "aws_lambda_upload" {
   role             = aws_iam_role.aws_lambda_upload_execution_role.arn
   handler          = "upload.handler"
   runtime          = "python3.12"
-  source_code_hash = filebase64sha256("${path.cwd}/../upload.zip")
+  source_code_hash = filebase64sha256("${path.module}/upload.zip")
   timeout          = 300
   memory_size      = 2048
   ephemeral_storage {
