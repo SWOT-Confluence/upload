@@ -103,8 +103,8 @@ jobs:
       - name: Upload zip package
         uses: actions/upload-artifact@v4
         with:
-          name: uploader.zip
-          path: uploader.zip
+          name: upload.zip
+          path: upload.zip
 
 
       # Configure credentials 
