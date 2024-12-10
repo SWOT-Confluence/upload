@@ -124,10 +124,9 @@ jobs:
         run: |
           echo "TF_VAR_environment=$TARGET_ENV" >> $GITHUB_ENV
           echo "TF_VAR_prefix=$PREFIX_ENV" >> $GITHUB_ENV
-          echo "TF_VAR_podaac_key=${{ secrets['PODAAC_KEY'] }}"
-          echo "TF_VAR_podaac_secret=${{ secrets['PODAAC_SECRET'] }}"
-          echo "TF_VAR_podaac_cnm_topic_arns=${{ secrets['CNM_TOPIC_ARNS'] }}"
-          echo "TF_VAR_podaac_cnm_topic_arn=${{ secrets['CNM_TOPIC_ARN'] }}"
+          echo "TF_VAR_podaac_key=${{ secrets['PODAAC_KEY'] }}" >> $GITHUB_ENV
+          echo "TF_VAR_podaac_secret=${{ secrets['PODAAC_SECRET'] }}" >> $GITHUB_ENV
+          echo "TF_VAR_podaac_cnm_topic_arn=${{ secrets['CNM_TOPIC_ARN'] }}" >> $GITHUB_ENV
           echo "TF_IN_AUTOMATION=true" >> $GITHUB_ENV
 
       - name: Initialize Terraform

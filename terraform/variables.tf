@@ -43,11 +43,6 @@ variable "podaac_cnm_topic_arn" {
   description = "CNM SNS Topic ARN to publish to"
 }
 
-variable "podaac_cnm_topic_arns" {
-  type        = list(string)
-  description = "List of CNM SNS Topic ARN to allow publication"
-}
-
 variable "prefix" {
   type        = string
   description = "Prefix to add to all AWS resources as a unique identifier"

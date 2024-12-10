@@ -102,7 +102,7 @@ resource "aws_iam_policy" "aws_lambda_upload_execution_policy" {
         "Action" : [
           "sns:Publish"
         ],
-        "Resource" : var.podaac_cnm_topic_arns
+        "Resource" : var.podaac_cnm_topic_arn
       }
     ]
   })
