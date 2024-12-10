@@ -7,6 +7,7 @@ variable "app_name" {
 variable "app_version" {
   type        = number
   description = "The application version number"
+  default     = 0.1
 }
 
 variable "aws_region" {
@@ -20,9 +21,9 @@ variable "default_tags" {
   default = {}
 }
 
-variable "iam_user" {
+variable "environment" {
   type        = string
-  description = "User to allow KMS key for SSM parameter store"
+  description = "The environment in which to deploy to"
 }
 
 variable "podaac_key" {
@@ -39,22 +40,15 @@ variable "podaac_secret" {
 
 variable "podaac_cnm_topic_arn" {
   type        = string
-  default     = "None"
   description = "CNM SNS Topic ARN to publish to"
 }
 
 variable "podaac_cnm_topic_arns" {
   type        = list(string)
-  default     = ["None"]
   description = "List of CNM SNS Topic ARN to allow publication"
 }
 
 variable "prefix" {
   type        = string
   description = "Prefix to add to all AWS resources as a unique identifier"
-}
-
-variable "profile" {
-  type        = string
-  description = "Named profile to build infrastructure with"
 }

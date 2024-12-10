@@ -12,20 +12,13 @@
 
 APP_NAME=$1
 S3_STATE=$2
-PROFILE=$3
 ROOT_PATH="$PWD"
 
-# Install dependencies
-pip install --target ./package netCDF4
+# Create Zipped Package
+deploy/deploy-zip.sh $APP_NAME
 
-# Zip dependencies
-cd package/
-zip -r ../$APP_NAME.zip .
-
-# Zip script
+# Deploy Terraform
+cd terraform
+terraform init -reconfigure -backend-config="bucket=$S3_STATE" -backend-config="key=$APP_NAME.tfstate" -backend-config="region=us-west-2"
+terraform apply -auto-approve
 cd ..
-zip $APP_NAME.zip $APP_NAME.py
-echo "Created: $APP_NAME.zip."
-
-terraform init -reconfigure -backend-config="bucket=$S3_STATE" -backend-config="key=upload.tfstate" -backend-config="region=us-west-2" -backend-config="profile=$PROFILE"
-terraform apply -var-file="conf.tfvars" -auto-approve
