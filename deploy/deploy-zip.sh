@@ -19,4 +19,5 @@ zip -r ../$APP_NAME.zip .
 # Zip script
 cd ..
 zip $APP_NAME.zip $APP_NAME.py
-echo "Created: $APP_NAME.zip."
+mv $APP_NAME.zip terraform/
+echo "Created: terraform/$APP_NAME.zip."
